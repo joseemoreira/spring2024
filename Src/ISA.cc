@@ -13,6 +13,15 @@ namespace CDC8600
 	    if (0 == PROC.X(Xj).u()) return true;
 	    else return false;
 	}
+
+	bool jmpp
+	(
+	    uint8_t Xj
+	)
+	{
+	    if (0 < PROC.X(Xj).i()) return true;
+	    else return false;
+	}
 	
         void xkj
 	(
@@ -62,6 +71,33 @@ namespace CDC8600
 	)
 	{
 	    PROC.X(Xj).i() = PROC.X(Xj).i() - k;
+	}
+
+	void idzkj
+	(
+	   uint8_t Xj,
+	   uint8_t Xk
+	)
+	{
+	    PROC.X(Xj).i() = -PROC.X(Xk).i();
+	}
+
+	void isjkj
+	(
+	    uint8_t Xj,
+	    uint8_t k
+	)
+	{
+	    PROC.X(Xj).i() = PROC.X(Xj).i() + k;
+	}
+
+	void ipjkj
+	(
+	    uint8_t Xj,
+	    uint8_t Xk
+	)
+	{
+	    PROC.X(Xj).i() = PROC.X(Xj).i() * PROC.X(Xk).i();
 	}
    } // namespace instructions
 } // namespace CDC8600

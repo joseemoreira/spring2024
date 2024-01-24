@@ -9,7 +9,7 @@ using namespace CDC8600;
 
 extern "C" int32_t dcopy_(int32_t *, double *, int32_t *, double *, int32_t *);
 
-const int N = 10;
+const int N = 20;
 
 void test_dcopy(int count)
 {
@@ -41,7 +41,7 @@ void test_dcopy(int count)
 
     delete [] Y;
 
-    cout << "dcopy [" << setw(1) << count << "] (n = " << setw(3) << n << ", incx = " << setw(2) << incx << ", incy = " << setw(2) << incy << ") : ";
+    cout << "dcopy [" << setw(2) << count << "] (n = " << setw(3) << n << ", incx = " << setw(2) << incx << ", incy = " << setw(2) << incy << ") : ";
     if (pass)
         cout << "PASS" << std::endl;
     else
