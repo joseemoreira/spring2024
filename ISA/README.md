@@ -42,6 +42,7 @@
 
 CDC 8600 floating-point arithmetic instructions have the following possible forms:
 1. $` X_j \leftarrow X_j \odot X_k `$ (2-operand, also called destructive form)
+2. $` X_i \leftarrow X_j \odot X_k `$ (3-operand)
 
 | Instruction          | Description                                  | Page in reference manual |
 |----------------------|----------------------------------------------|--------------------------|
