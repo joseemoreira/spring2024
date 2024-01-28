@@ -40,8 +40,10 @@
 
 ### Floating-point Arithmetic Instructions
 
-| Instruction          | Description                                 | Page in reference manual |
-|----------------------|---------------------------------------------|--------------------------|
-|  fdivjkj(Xj, Xk)     | Floating divide of (Xj) by (Xk) to Xj       | 48                       |
-|  faddjki(Xi, Xj, Xk) | Floating sum of (Xj) plus (Xk) to Xi        | 124                      |
-
+| Instruction          | Description                                  | Page in reference manual |
+|----------------------|----------------------------------------------|--------------------------|
+| fdiv(Xj, Xk)         | Floating divide of (Xj) by (Xk) to Xj        | 48                       |
+| fadd(Xi, Xj, Xk)     | Floating sum of (Xj) plus (Xk) to Xi         | 124                      |
+| fsub(Xi, Xj, Xk)     | Floating difference of (Xj) minus (Xk) to Xi | 126                      |
+| fmul(Xi, Xj, Xk)     | Floating product of (Xj) times (Xk) to Xi    | 128                      |
+ 
