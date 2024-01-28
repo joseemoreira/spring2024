@@ -2,7 +2,7 @@
 
 ## Architected State
 
-The architected state $` S(N,P) = \langle \mathbf{M}, \mathbf{X} \rangle `$ of a CDC 8600 computer with $` N `$ words of memory and $` P `$ processors
+The architected state $` S(N,P) = \langle \mathbf{M}, \mathbf{X} \rangle `$ of a CDC 8600 computer with $` N \leq 1048576`$ words of memory and $` P \leq 4 `$ processors
 consists of a vector $` \mathbf{M}[0,N) `$ of words (the memory) and a vector $` \mathbf{X}[0,P) `$ of context frame indices.
 $` \mathbf{M}[n], n \in [0,N) `$ is the $` n `$-th word of memory and $` \mathbf{X}[p], p \in [0,P) `$ is the index of the context frame for processor $` p `$.
 
