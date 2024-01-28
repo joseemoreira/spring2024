@@ -10,6 +10,7 @@ namespace CDC8600
 	    uint8_t Xj
 	)
 	{
+	    assert(Xj < 16);
 	    if (0 == PROC.X(Xj).u()) return true;
 	    else return false;
 	}
@@ -19,10 +20,11 @@ namespace CDC8600
 	    uint8_t Xj
 	)
 	{
+	    assert(Xj < 16);
 	    if (0 < PROC.X(Xj).i()) return true;
 	    else return false;
 	}
-	
+
         void xkj
 	(
 	    uint8_t Xj, 
@@ -98,6 +100,30 @@ namespace CDC8600
 	)
 	{
 	    PROC.X(Xj).i() = PROC.X(Xj).i() * PROC.X(Xk).i();
+	}
+
+	void rdKj
+	(
+	    uint8_t Xj,
+	    uint32_t K
+	)
+	{
+	    assert(Xj < 16);
+	    assert(K < 1024*1024);
+
+	    if (K < PROC.FL().u()*256)
+	    {
+		// Good
+		uint32_t addr = PROC.RA().u()*256 + K;	// Architected address
+		assert(addr < params::MEM::N);		// Check against hardware limit
+		PROC.X(Xj) = MEM[addr];
+	    }
+	    else
+	    {
+		// Bad
+		PROC.cond()(2) = true;
+		PROC._XA = PROC.XA().u();
+	    }
 	}
    } // namespace instructions
 } // namespace CDC8600
