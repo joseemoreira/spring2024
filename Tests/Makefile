@@ -26,3 +26,4 @@ blasref:
 
 clean:
 	/bin/rm -rf ${TESTS}
+	bash -c "pushd ${BLAS_REF} && make clean && popd > /dev/null"
