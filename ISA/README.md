@@ -6,6 +6,10 @@
 
 ### Logic Instructions
 
+CDC 8600 logic instructions have the following possible forms:
+1. $` X_j \leftarrow X_j \odot X_k `$ (2-operand, also called destructive form)
+2. $` X_j \leftarrow X_j \odot n `$ (1-operand and a 6-bit immediate)
+
 | Instruction    | Description                                         | Page in reference manual |
 |----------------|-----------------------------------------------------|--------------------------|
 | lpjkj(Xj, Xk)  | Logical product of (Xj) and (Xk) to Xj              | 37                       |
