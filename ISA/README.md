@@ -2,6 +2,8 @@
 
 ## Architected State
 
+The architected state $` S(N,P) = \langle \mathbf{M}, \mathbf{X} \rangle `$
+
 ## Arithmetic and Logic Instructions
 
 ### Logic Instructions
