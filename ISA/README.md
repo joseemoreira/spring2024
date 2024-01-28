@@ -10,6 +10,7 @@ The first 8 KiW of memory contain 256 context frames of 32 words each.
 Each context frame stores a 17-word *exchange package* with the architected registers of a CDC 8600 processor.
 In each context frame, the first 16 words store the contents of registers X0 through X15.
 The 17th word stores the contents of the *Exchange Package Word* (XPW), itself consisting of various status and mode registers.
+(See page 29 of the reference manual.)
 
 ## Arithmetic and Logic Instructions
 
