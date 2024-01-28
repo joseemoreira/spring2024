@@ -40,6 +40,9 @@
 
 ### Floating-point Arithmetic Instructions
 
+CDC 8600 floating-point arithmetic instructions have the following possible forms:
+1. $` X_j \leftarrow X_j \odot X_k `$ (2-operand, also called destructive form)
+
 | Instruction          | Description                                  | Page in reference manual |
 |----------------------|----------------------------------------------|--------------------------|
 | fdiv(Xj, Xk)         | Floating divide of (Xj) by (Xk) to Xj        | 48                       |
