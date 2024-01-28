@@ -43,7 +43,27 @@ namespace CDC8600
 	    uint8_t Xk
 	)
 	{
-	    PROC.X(Xi) = MEM[PROC.X(Xj).i() + PROC.X(Xk).i()];
+	    assert(Xi < 16);
+	    assert(Xj < 16);
+	    assert(Xk < 16);
+	    int64_t addr = (PROC.X(Xj).i() + PROC.X(Xk).i()) & 0xfffff;
+	    assert(PROC.FL().u() == 1024);
+	    if (addr < PROC.FL().u()*256 )
+	    {
+		// Good
+		assert(PROC.RA().u() == 0);
+		addr += PROC.RA().u()*256;
+		assert(addr >= 0);			    // Address should be nonnegative
+		assert(addr < params::MEM::N);              // Check against hardware limit
+		PROC.X(Xi) = MEM[addr];                     // Read data
+	    }
+	    else
+	    {
+		// Bad
+		PROC._XA = PROC.XA().u();
+		PROC.cond()(2) = true;
+		assert(false);
+	    }
 	}
 
         void sdjki
