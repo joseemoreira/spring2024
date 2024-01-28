@@ -3,8 +3,13 @@
 ## Architected State
 
 The architected state $` S(N,P) = \langle \mathbf{M}, \mathbf{X} \rangle `$ of a CDC 8600 computer with $` N \leq 1048576`$ words of memory and $` P \leq 4 `$ processors
-consists of a vector $` \mathbf{M}[0,N) `$ of words (the memory) and a vector $` \mathbf{X}[0,P) `$ of context frame indices.
+consists of a vector $` \mathbf{M}[0,N) `$ of 64-bit words (the memory) and a vector $` \mathbf{X}[0,P) `$ of 8-bit context frame indices.
 $` \mathbf{M}[n], n \in [0,N) `$ is the $` n `$-th word of memory and $` \mathbf{X}[p], p \in [0,P) `$ is the index of the context frame for processor $` p `$.
+
+The first 8 KiW of memory contain 256 context frames of 32 words each.
+Each context frame stores a 17-word *exchange package* with the architected registers of a CDC 8600 processor.
+In each context frame, the first 16 words store the contents of registers X0 through X15.
+The 17th word stores the contents of the *Exchange Package Word* (XPW), itself consisting of various status and mode registers.
 
 ## Arithmetic and Logic Instructions
 
