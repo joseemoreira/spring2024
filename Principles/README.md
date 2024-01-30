@@ -22,3 +22,19 @@ This is just our convention.
 | $`29`$     | $`[237568,245760)`$ | Stack for processor 1    |
 | $`30`$     | $`[245760,253952)`$ | Stack for processor 2    |
 | $`31`$     | $`[253952,262144)`$ | Stack for processor 3    |
+
+### The context frames
+
+Page 0 of memory (addresses $`[0,8192)`$) contains $`256 \times 32`$-word context frames.
+The first 17 words of a context frame contain an *exchange package*, definig the values of the 16 general-purpose registers (X(0) through X(15)) and and additiona *exchange package word* (XPW) with various additional registers.
+
+By convention, we are going to reserve all 8 KiWs in page 0 for context frames.
+(The ISA does not say you have to reserve all of them.)
+For the time being, we are going to assign specific use to the first 8 frames.
+
+| Frame # | Addresses     | Purpose                            |
+|---------|---------------|------------------------------------|
+| $`0`$   | $`[  0, 32)`$ | Supervisor context for processor 0 |
+| $'1'$   | $'[ 32, 64)'$ | Supervisor context for processor 1 |
+| $`2`$   | $`[ 64, 96)`$ | Supervisor context for processor 0 |
+| $`3`$   | $`[ 96,128)`$ | Supervisor context for processor 0 |
