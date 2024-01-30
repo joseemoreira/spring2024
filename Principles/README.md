@@ -19,4 +19,6 @@ This is just our convention.
 | $`3`$      | $`[ 24576, 32768)`$ | User static data         |
 | $`[4,28)`$ | $`[ 32768,229376)`$ | Heap                     |
 | $`28`$     | $`[229376,237568)`$ | Stack for processor 0    |
+| $`29`$     | $`[237568,245760)`$ | Stack for processor 1    |
+| $`30`$     | $`[245760,253952)`$ | Stack for processor 2    |
 | $`31`$     | $`[253952,262144)`$ | Stack for processor 3    |
