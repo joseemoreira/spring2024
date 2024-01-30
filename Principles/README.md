@@ -17,6 +17,6 @@ This is just our convention.
 | $`1`$      | $`[  8192, 16384)`$ | Supervisor code and data |
 | $`2`$      | $`[ 16384, 24576)`$ | User code                |
 | $`3`$      | $`[ 24576, 32768)`$ | User static data         |
-| $'[4,28)`$ | $'[ 32768,229376)`$ | Heap                     |
-| $`28`$     | $`[229376,237568)'$ | Stack for processor 0    |
-| $`31`$     | $`[253952,262144)'$ | Stack for processor 3    |
+| $`[4,28)`$ | $`[ 32768,229376)`$ | Heap                     |
+| $`28`$     | $`[229376,237568)`$ | Stack for processor 0    |
+| $`31`$     | $`[253952,262144)`$ | Stack for processor 3    |
