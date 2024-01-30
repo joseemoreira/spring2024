@@ -35,6 +35,10 @@ For the time being, we are going to assign specific use to the first 8 frames.
 | Frame # | Addresses     | Purpose                            |
 |---------|---------------|------------------------------------|
 | $`0`$   | $`[  0, 32)`$ | Supervisor context for processor 0 |
-| $'1'$   | $'[ 32, 64)'$ | Supervisor context for processor 1 |
-| $`2`$   | $`[ 64, 96)`$ | Supervisor context for processor 0 |
-| $`3`$   | $`[ 96,128)`$ | Supervisor context for processor 0 |
+| $`1`$   | $`[ 32, 64)`$ | Supervisor context for processor 1 |
+| $`2`$   | $`[ 64, 96)`$ | Supervisor context for processor 2 |
+| $`3`$   | $`[ 96,128)`$ | Supervisor context for processor 3 |
+| $`4`$   | $`[128,160)`$ | User context for processor 0       |
+| $`5`$   | $`[160,192)`$ | User context for processor 1       |
+| $`6`$   | $`[192,224)`$ | User context for processor 2       |
+| $`7`$   | $`[224,256)`$ | User context for processor 3       |
