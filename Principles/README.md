@@ -13,6 +13,6 @@ This is just our convention.
 
 | Page # | Addresses | Purpose |
 |--------|-----------|---------|
-| 0      | [0,8192)  | Context frames |
+| 0      | $`[0,8192)`$  | Context frames |
 | 1      | [8192,16384)  | Supervisor code |
 | 2      | [16384,24576) | Supervisor data |
