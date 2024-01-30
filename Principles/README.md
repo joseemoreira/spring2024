@@ -11,8 +11,12 @@ By convention, we are going to divide this 256-KiW memory into $`32 \times 8`$-K
 The CDC 8600 ISA does not know anything about pages.
 This is just our convention.
 
-| Page # | Addresses | Purpose |
-|--------|-----------|---------|
-| 0      | $`[0,8192)`$  | Context frames |
-| 1      | [8192,16384)  | Supervisor code |
-| 2      | [16384,24576) | Supervisor data |
+| Page #     | Addresses           | Purpose                  |
+|------------|---------------------|--------------------------|
+| $`0`$      | $`[     0,  8192)`$ | Context frames           |
+| $`1`$      | $`[  8192, 16384)`$ | Supervisor code and data |
+| $`2`$      | $`[ 16384, 24576)`$ | User code                |
+| $`3`$      | $`[ 24576, 32768)`$ | User static data         |
+| $'[4,28)`$ | $'[ 32768,229376)`$ | Heap                     |
+| $`28`$     | $`[229376,237568)'$ | Stack for processor 0    |
+| $`31`$     | $`[253952,262144)'$ | Stack for processor 3    |
