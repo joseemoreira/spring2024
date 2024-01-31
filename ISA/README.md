@@ -12,6 +12,8 @@ In each context frame, the first 16 words store the contents of registers X0 thr
 The 17th word stores the contents of the *Exchange Package Word* (XPW), itself consisting of various status and mode registers.
 (See page 29 of the reference manual.)
 
+## Load/Store Instructions
+
 ## Arithmetic and Logic Instructions
 
 ### Logic Instructions
@@ -35,7 +37,6 @@ CDC 8600 logic instructions have the following possible forms:
 | blkjn(Xj, n)   | Blank lower (Xj) for n bits                         | 118                      |
 | rol((Xj, n)    | Left rotate (Xj) by n bits                          | 119                      |
 | shr(Xj, n)     | Right shift (Xj) by n bits                          | 120                      |
-
 
 ### Integer Arithmetic Instructions
 
@@ -71,3 +72,17 @@ CDC 8600 floating-point arithmetic instructions have the following possible form
 | fsub(Xi, Xj, Xk)     | Floating difference of (Xj) minus (Xk) to Xi | 126                      |
 | fmul(Xi, Xj, Xk)     | Floating product of (Xj) times (Xk) to Xi    | 128                      |
  
+## Control-flow Instructions
+
+| Instruction         | Description                                   | Page in reference manual |
+|---------------------|-----------------------------------------------|--------------------------|
+| jmpPK(label)        | Jump to P+K                                   | 86                       |
+| call(Xj,label)      | Call subroutine at P+K, save address to Xj    | 88                       |
+| jmpPKrng(Xj, label) | Jump to P+K if (Xj) in range                  | 90                       |
+
+
+
+
+
+## I/O Instructions
+
