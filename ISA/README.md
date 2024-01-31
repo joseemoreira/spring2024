@@ -86,7 +86,8 @@ CDC 8600 floating-point arithmetic instructions have the following possible form
 | jmpn(Xj, label)                                  | Jump to P+K if (Xj) is negative                     | 100                      |
 | calla(Xj, func)                                  | Call subroutine at adress K, save address to Xj     | 102                      |
 | callp(Xj, Xk)                                    | Call subroutine at address (Xk), save address to Xj | 103                      |
-| xexit()                                          | Exchange exit                                       | 116                      |
+| jmpk(Xj, k)                                      | Subroutine exit, computed jump to (Xj) + k          | 110                      |
+| jmpa(label)                                      | Jump to K                                           | 114                      |
 | bb(Xj, Xk, label)                                | Branch backward i words if (Xj) < (Xk)              | 130                      |
 
 ## I/O Instructions
