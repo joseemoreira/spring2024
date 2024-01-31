@@ -10,9 +10,27 @@
 
 #define jmp(L)			goto L;
 
+#define jmpa(L)			goto L;
+
+#define jmprng(Xj,L)		if (instructions::jmprng(Xj)) goto L;
+
+#define jmpnrng(Xj,L)		if (instructions::jmpnrng(Xj)) goto L;
+
 #define jmpz(Xj,L)		if (instructions::jmpz(Xj)) goto L;
 
+#define jmpnz(Xj,L)		if (instructions::jmpnz(Xj)) goto L;
+
 #define jmpp(Xj,L)		if (instructions::jmpp(Xj)) goto L;
+
+#define jmpn(Xj,L)		if (instructions::jmpn(Xj)) goto L;
+
+#define bb(Xj,Xk,L)		if (instructions::bb(Xj, Xk)) goto L;
+
+#define call(Xj,func)		if (instructions::call(Xj)) func ();
+
+#define calla(Xj,func)		if (instructions::calla(Xj)) func ();
+
+#define callp(Xj,Xk)		instructions::callp(Xj, Xk);
 
 #define jmpk(Xj,k)		return;
 
