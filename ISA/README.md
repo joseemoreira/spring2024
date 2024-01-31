@@ -85,6 +85,9 @@ Orthogonal to the types above, there are three ways to specify the target addres
 2. PC-relative (P+K): The target address is computed by adding an 20-bit immediate field (K) to the current program address (P).
 3. Indirect (Xj): The target address is the content of a register Xj. This is used in all subroutine returns and to call a function pointer.
 
+In assembly language programming, a known target is typically specified by a label.
+It is the job of the assembler to compute either the absolute address (K) or the displacement (P+K) for the corresponing branch instruction.
+
 | Instruction                                      | Description                                         | Page in reference manual |
 |--------------------------------------------------|-----------------------------------------------------|--------------------------|
 | jmp(label)                                       | Jump to P+K                                         | 86                       |
