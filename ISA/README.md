@@ -74,11 +74,13 @@ CDC 8600 floating-point arithmetic instructions have the following possible form
  
 ## Control-flow Instructions
 
-| Instruction         | Description                                   | Page in reference manual |
-|---------------------|-----------------------------------------------|--------------------------|
-| jmpPK(label)        | Jump to P+K                                   | 86                       |
-| call(Xj,label)      | Call subroutine at P+K, save address to Xj    | 88                       |
-| [jmpPKrng](controlflow/jmpPKrng.md)(Xj, label) | Jump to P+K if (Xj) in range                  | 90                       |
+| Instruction                                      | Description                                   | Page in reference manual |
+|--------------------------------------------------|-----------------------------------------------|--------------------------|
+| jmpPK(label)                                     | Jump to P+K                                   | 86                       |
+| call(Xj,label)                                   | Call subroutine at P+K, save address to Xj    | 88                       |
+| [jmpPKrng](controlflow/jmpPKrng.md)(Xj, label)   | Jump to P+K if (Xj) in range                  | 90                       |
+| [jmpPKnrng](controlflow/jmpPKnrng.md)(Xj, label) | Jump to P+K if (Xj) not in range              | 92                       |
+
 
 
 
