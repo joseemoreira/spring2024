@@ -74,6 +74,17 @@ CDC 8600 floating-point arithmetic instructions have the following possible form
  
 ## Control-flow Instructions
 
+We are considering only a subset of the control-flow instructions in the CDC 8600 ISA.
+Among those, we identify three types of branch instructions:
+1. Jump to a target program address unconditionally.
+2. Jump to a target program address if some condition on one or more registers holds.
+3. Save the current program address to a register and jump (unconditionally) to a target program address (subroutine call).
+
+Orthogonal to the types above, there are three ways to specify the target address:
+1. Absolute (K): The target address is identified by a 20-bit immediate field (K).
+2. PC-relative (P+K): The target address is computed by adding an 20-bit immediate field (K) to the current program address (P).
+3. Indirect (Xj): The target address is the content of a register Xj. This is used in all subroutine returns and to call a function pointer.
+
 | Instruction                                      | Description                                         | Page in reference manual |
 |--------------------------------------------------|-----------------------------------------------------|--------------------------|
 | jmp(label)                                       | Jump to P+K                                         | 86                       |
