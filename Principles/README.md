@@ -26,7 +26,7 @@ This is just our convention.
 ### The context frames
 
 Page 0 of memory (addresses $`[0,8192)`$) contains $`256 \times 32`$-word context frames.
-The first 17 words of a context frame contain an *exchange package*, definig the values of the 16 general-purpose registers (X(0) through X(15)) and an additional *exchange package word* (XPW) with various additional registers.
+The first 17 words of a context frame contain an *exchange package*, definig the values of the 16 general-purpose registers (X(0) through X(15)) and an additional *exchange parameter word* (XPW) with various additional registers.
 
 By convention, we are going to reserve all 8 KiWs in page 0 for context frames.
 (The ISA does not say you have to reserve all of them.)
