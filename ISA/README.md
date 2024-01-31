@@ -74,13 +74,19 @@ CDC 8600 floating-point arithmetic instructions have the following possible form
  
 ## Control-flow Instructions
 
-| Instruction                                      | Description                                   | Page in reference manual |
-|--------------------------------------------------|-----------------------------------------------|--------------------------|
-| jmp(label)                                       | Jump to P+K                                   | 86                       |
-| call(Xj, label)                                  | Call subroutine at P+K, save address to Xj    | 88                       |
-| [jmprng](controlflow/jmprng.md)(Xj, label)       | Jump to P+K if (Xj) in range                  | 90                       |
-| [jmpnrng](controlflow/jmpnrng.md)(Xj, label)     | Jump to P+K if (Xj) not in range              | 92                       |
-| xexit()                                          | Exchange exit                                 | 116                      |
-| bb(Xj, Xk, label)                                | Branch backward i words if (Xj) < (Xk)        | 130                      |
+| Instruction                                      | Description                                         | Page in reference manual |
+|--------------------------------------------------|-----------------------------------------------------|--------------------------|
+| jmp(label)                                       | Jump to P+K                                         | 86                       |
+| call(Xj, func)                                   | Call subroutine at P+K, save address to Xj          | 88                       |
+| [jmprng](controlflow/jmprng.md)(Xj, label)       | Jump to P+K if (Xj) in range                        | 90                       |
+| [jmpnrng](controlflow/jmpnrng.md)(Xj, label)     | Jump to P+K if (Xj) not in range                    | 92                       |
+| jmpz(Xj, label)                                  | Jump to P+K if (Xj) equal to 0                      | 94                       |
+| jmpnz(Xj, label)                                 | Jump to P+K if (Xj) not equal to 0                  | 96                       |
+| jmpp(Xj, label)                                  | Jump to P+K if (Xj) is positive                     | 98                       |
+| jmpn(Xj, label)                                  | Jump to P+K if (Xj) is negative                     | 100                      |
+| calla(Xj, func)                                  | Call subroutine at adress K, save address to Xj     | 102                      |
+| callp(Xj, Xk)                                    | Call subroutine at address (Xk), save address to Xj | 103                      |
+| xexit()                                          | Exchange exit                                       | 116                      |
+| bb(Xj, Xk, label)                                | Branch backward i words if (Xj) < (Xk)              | 130                      |
 
 ## I/O Instructions
