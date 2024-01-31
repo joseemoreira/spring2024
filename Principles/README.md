@@ -52,7 +52,7 @@ Later, as our CDC 8600 assembly code becomes more complex, we may start passing 
 Single-word arguments (integer, double real, addresses) are passed in one X register.
 Double-word arguments (double complex) are passed in a pair of X registers.
 We pass the first argument in register X0 (if it is a single-word) or register pair <X0,X1> (if it is a double-word) and go from there.
-Return values from functions are passed in X0 (single-word) or pair <X0,X1< (double-word).
+Return values from functions are passed in X0 (single-word) or pair <X0,X1> (double-word).
 
 ## Floating-point numbers
 
