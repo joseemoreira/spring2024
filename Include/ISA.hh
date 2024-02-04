@@ -8,9 +8,9 @@
     L : {                                                                                                              \
     }
 
-#define jmp(L)			goto L;
+#define jmp(L)			if (process(new  instructions::jmp(0))) goto L;
 
-#define jmpa(L)			goto L;
+#define jmpa(L)			if (process(new instructions::jmpa(0))) goto L;
 
 #define jmprng(Xj,L)		if (instructions::jmprng(Xj)) goto L;
 
@@ -40,7 +40,7 @@
 
 #define sdjki(Xi, Xj, Xk)	instructions::sdjki(Xi, Xj, Xk);
 
-#define isjki(Xi, Xj, Xk)	instructions::isjki(Xi, Xj, Xk);
+#define isjki(Xi, Xj, Xk)	process(new instructions::isjki(Xi, Xj, Xk));
 
 #define idjkj(Xj, k)		instructions::idjkj(Xj, k);
 

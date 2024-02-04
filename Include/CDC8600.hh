@@ -152,44 +152,91 @@ namespace CDC8600
 
     namespace instructions
     {
-	void compkj(uint8_t, uint8_t);		// Copy complement of (Xk) to Xj 				(p41)
 	void rdjki(uint8_t, uint8_t, uint8_t);	// Read data at address (Xj) + (Xk) to (Xi)			(p133)
+	void rdKj(uint8_t, uint32_t);		// Read data at address K to Xj					(p74)
 	void sdjki(uint8_t, uint8_t, uint8_t);	// Store data at address (Xj) + (Xk) from Xi			(p135)
-	void isjki(uint8_t, uint8_t, uint8_t);	// Integer sum of (Xj) plus (Xk) to Xi				(p122)
 	void ipjkj(uint8_t, uint8_t);		// Integer product of (Xj) times (Xk) to Xj 			(p52)
 	void idjkj(uint8_t, uint8_t);		// Integer difference of (Xj) minus k to Xj 			(p58)
 	void isjkj(uint8_t, uint8_t);		// Integer sum of (Xj) plus k to Xj 				(p57)
 	void idzkj(uint8_t, uint8_t);		// Integer difference of zero minus (Xk) to Xj 			(p62)
-	void rdKj(uint8_t, uint32_t);		// Read data at address K to Xj					(p74)
     } // namespace instructions
 
-    class instruction
+    class instruction			// Generic instruction class
     {
 	public:
 	    virtual bool execute() = 0;	// every instruction must have a method "execute" that implements its semantics and returns "true" if branch is taken
     };
 
-    class Fijk : public instruction
-    {
-    };
-
-    class FijK : public instruction
-    {
-    };
-
-    class Fnjn : public instruction
-    {
-    };
-
-    class Fjk : public instruction
+    class Fijk : public instruction	// Instructions of 4/4/4/4 format
     {
 	protected:
-	    u08	_F;
-	    u08	_j;
-	    u08 _k;
+	    u08 _F;	// 4-bit function code
+	    u08 _i;	// 4-bit i field
+	    u08 _j;	// 4-bit j field
+	    u08 _k;	// 4-bit k field
+	public:
+	    Fijk(u08 F, u08 i, u08 j, u08 k)
+	    {
+		assert(F < 16);
+		assert(i < 16);
+		assert(j < 16);
+		assert(k < 16);
+		_F = F;
+		_i = i;
+		_j = j;
+		_k = k;
+	    }
+    };
+
+    class FijK : public instruction	// Instructions of 4/4/4/20 format
+    {
+	protected:
+	    u08	_F;	// 4-bit function code
+	    u08 _i;	// 4-bit i field
+	    u08 _j;	// 4-bit j field
+	    u32 _K;	// 20-bit K field
+	public:
+	    FijK(u08 F, u08 i, u08 j, u32 K)
+	    {
+		assert(F < 16);
+		assert(i < 16);
+		assert(j < 16);
+		assert(K < (1 << 20));
+		_F = F;
+		_i = i;
+		_j = j;
+		_K = K;
+	    }
+    };
+
+    class Fjn : public instruction	// Instructions of 6/4/6 format
+    {
+	protected:
+	    u08 _F;	// 6-bit function code
+	    u08 _j;	// 4-bit j field
+	    u08 _n;	// 6-bit n field
+	public:
+	    Fjn(u08 F, u08 j, u08 n)
+	    {
+		assert(F < 64);
+		assert(j < 16);
+		assert(n < 64);
+		_F = F;
+		_j = j;
+		_n = n;
+	    }
+    };
+
+    class Fjk : public instruction	// Instructions of 8/4/4 format
+    {
+	protected:
+	    u08	_F;	// 8-bit Function code
+	    u08	_j;	// 4-bit j field
+	    u08 _k;	// 4-bit k field
 	public:
 	    Fjk(u08 F, u08 j, u08 k)
 	    {
+		assert(F < 256);
 		assert(j < 16);
 		assert(k < 16);
 		_F = F;
@@ -198,15 +245,16 @@ namespace CDC8600
 	    }
     };
 
-    class FjK : public instruction
+    class FjK : public instruction	// Instructions of 8/4/20 fomrat
     {
 	protected:
-	    u08 _F;
-	    u08 _j;
-	    u32 _K;
+	    u08 _F;	// 8-bit Function code
+	    u08 _j;	// 4-bit j field
+	    u32 _K;	// 20-bit K field
 	public:
 	    FjK(u08 F, u08 j, u32 K)
 	    {
+		assert(F < 256);
 		assert(j < 16);
 		assert(K < (1 << 20));
 		_F = F;
@@ -217,9 +265,12 @@ namespace CDC8600
 
     namespace instructions
     {
+#include<jmp.hh>				// Jump to P+K                                                  (p86)
 #include<jmpz.hh>				// Jump to P + K if (Xj) equal to 0                             (p94)
 #include<jmpp.hh>				// Jump to P + K if (Xj) positive                               (p98)
 #include<xkj.hh>				// Transmit k to Xj                                             (p55)
+#include<compk.hh>				// Copy complement of (Xk) to Xj 				(p41)
+#include<isjki.hh>				// Integer sum of (Xj) plus (Xk) to Xi				(p122)
     } // namespace instructions
 
     extern vector<instruction*>	trace;
