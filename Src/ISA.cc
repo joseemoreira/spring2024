@@ -45,52 +45,6 @@ namespace CDC8600
 	    MEM[PROC.X(Xj).i() + PROC.X(Xk).i()] = PROC.X(Xi);
 	}
 
-        void isjki
-	(
-	    uint8_t Xi, 
-	    uint8_t Xj, 
-	    uint8_t Xk
-	)
-	{
-	    PROC.X(Xi).i() = PROC.X(Xj).i() + PROC.X(Xk).i();
-	}
-	
-        void idjkj
-	(
-	    uint8_t Xj, 
-	    uint8_t k
-	)
-	{
-	    PROC.X(Xj).i() = PROC.X(Xj).i() - k;
-	}
-
-	void idzkj
-	(
-	   uint8_t Xj,
-	   uint8_t Xk
-	)
-	{
-	    PROC.X(Xj).i() = -PROC.X(Xk).i();
-	}
-
-	void isjkj
-	(
-	    uint8_t Xj,
-	    uint8_t k
-	)
-	{
-	    PROC.X(Xj).i() = PROC.X(Xj).i() + k;
-	}
-
-	void ipjkj
-	(
-	    uint8_t Xj,
-	    uint8_t Xk
-	)
-	{
-	    PROC.X(Xj).i() = PROC.X(Xj).i() * PROC.X(Xk).i();
-	}
-
 	void rdKj
 	(
 	    uint8_t Xj,
