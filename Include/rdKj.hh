@@ -20,4 +20,9 @@ class rdjK : public FjK
 		assert(false);
 	    }
 	}
+
+	string mnemonic() const
+	{
+	    return "rdjK";
+	}
 };

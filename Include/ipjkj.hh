@@ -7,4 +7,9 @@ class ipjkj : public Fjk
 	{
 	    PROC.X(_j).i() = PROC.X(_j).i() * PROC.X(_k).i();
 	}
+
+	string mnemonic() const
+	{
+	    return "ipjkj";
+	}
 };

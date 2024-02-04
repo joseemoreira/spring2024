@@ -7,4 +7,9 @@ class isjki : public Fijk
 	{
 	    PROC.X(_i).i() = PROC.X(_j).i() + PROC.X(_k).i();
 	}
+
+	string mnemonic() const
+	{
+	    return "isjki";
+	}
 };

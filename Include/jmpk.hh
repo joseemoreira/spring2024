@@ -7,4 +7,9 @@ class jmpk : public Fjk
 	{
 	    return true;
 	}
+	
+	string mnemonic() const
+	{
+	    return "jmpk";
+	}
 };

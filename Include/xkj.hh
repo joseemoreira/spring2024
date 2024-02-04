@@ -8,4 +8,9 @@ class xkj : public Fjk
 	    PROC.X(_j).u() = _k;
 	    return false;
 	}
+
+	string mnemonic() const
+	{
+	    return "xkj";
+	}
 };

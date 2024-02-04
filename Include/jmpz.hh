@@ -8,4 +8,9 @@ class jmpz : public FjK
 	    if (0 == PROC.X(_j).u()) return true;
             else return false;
 	}
+
+	string mnemonic() const
+	{
+	    return "jmpz";
+	}
 };

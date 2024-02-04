@@ -24,4 +24,9 @@ class sdjki : public Fijk
 		assert(false);
 	    }
 	}
+
+	string mnemonic() const
+	{
+	    return "sdjki";
+	}
 };

@@ -150,10 +150,19 @@ namespace CDC8600
         return call5<T1, T2, T3, T4, T5>(f);
     }
 
-    class instruction			// Generic instruction class
+    class instruction					// Generic instruction class
     {
+	protected:
+	    u32	_line;					// line number of instruction in source file
+	    u32 _addr;					// byte (not word) address of instruction in memory
 	public:
-	    virtual bool execute() = 0;	// every instruction must have a method "execute" that implements its semantics and returns "true" if branch is taken
+	    virtual bool execute() = 0;			// every instruction must have a method "execute" that implements its semantics and returns "true" if branch is taken
+	    virtual u08 len() const = 0;		// length of instruction in bytes (2 or 4)
+	    virtual string mnemonic() const = 0;	// mnemonic for the instruction
+	    virtual string dasm() const = 0;		// disassembly for the instruction
+	    virtual u32 encoding() const = 0;		// instruction encoding
+	    u32& line() { return _line; }
+	    u32& addr() { return _addr; }
     };
 
     class Fijk : public instruction	// Instructions of 4/4/4/4 format
@@ -175,6 +184,9 @@ namespace CDC8600
 		_j = j;
 		_k = k;
 	    }
+	    u08 len() const { return 2; }
+	    string dasm() const { return mnemonic() + "(" + to_string(_i) + ", " + to_string(_j) + ", " + to_string(_k) + ")"; }
+	    u32 encoding() const { return (_F << 12) + (_i << 8) + (_j << 4) + (_k << 0); }
     };
 
     class FijK : public instruction	// Instructions of 4/4/4/20 format
@@ -196,6 +208,9 @@ namespace CDC8600
 		_j = j;
 		_K = K;
 	    }
+	    u08 len() const { return 4; }
+	    string dasm() const { return mnemonic() + "(" + to_string(_i) + ", " + to_string(_j) + ", " + to_string(_K) + ")"; }
+	    u32 encoding() const { return (_F << 28) + (_i << 24) + (_j << 20) + (_K << 0); }
     };
 
     class Fjn : public instruction	// Instructions of 6/4/6 format
@@ -214,6 +229,8 @@ namespace CDC8600
 		_j = j;
 		_n = n;
 	    }
+	    u08 len() const { return 2; }
+	    string dasm() const { return mnemonic() + "(" + to_string(_j) + ", " + to_string(_n) + ")"; }
     };
 
     class Fjk : public instruction	// Instructions of 8/4/4 format
@@ -232,6 +249,9 @@ namespace CDC8600
 		_j = j;
 		_k = k;
 	    }
+	    u08 len() const { return 2; }
+	    string dasm() const { return mnemonic() + "(" + to_string(_j) + ", " + to_string(_k) + ")"; }
+	    u32 encoding() const { return (_F << 8) + (_j << 4) + (_k << 0); }
     };
 
     class FjK : public instruction	// Instructions of 8/4/20 fomrat
@@ -250,6 +270,9 @@ namespace CDC8600
 		_j = j;
 		_K = K;
 	    }
+	    u08 len() const { return 4; }
+	    string dasm() const { return mnemonic() + "(" + to_string(_j) + ", " + to_string(_K) + ")"; }
+	    u32 encoding() const { return (_F << 24) + (_j << 20) + (_K << 0); }
     };
 
     namespace instructions
@@ -270,9 +293,17 @@ namespace CDC8600
 #include<sdjki.hh>				// Store data at address (Xj) + (Xk) from Xi			(p135)
     } // namespace instructions
 
+    namespace instructions
+    {
+	extern u32  count;	// Current instruction count
+	extern bool target;	// Is the current instruction the target of a branch?
+    };
+
     extern vector<instruction*>	trace;
 
-    extern bool process(instruction*);
+    extern bool process(instruction*, u32);
+
+    extern void dump(vector<instruction*>&);
 
 } // namespace CDC8600
 

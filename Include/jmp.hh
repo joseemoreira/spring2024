@@ -7,4 +7,14 @@ class jmp : public FjK
 	{
 	    return true;
 	}
+
+	string mnemonic() const
+	{
+	    return "jmp";
+	}
+
+	string dasm() const
+	{
+	    return mnemonic() + "(" + to_string(_K) + ")";
+	}
 };

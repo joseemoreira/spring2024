@@ -8,4 +8,9 @@ class jmpp : public FjK
 	    if (0 < PROC.X(_j).i()) return true;
             else return false;
 	}
+
+	string mnemonic() const
+	{
+	    return "jmpp";
+	}
 };

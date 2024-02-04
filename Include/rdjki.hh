@@ -24,4 +24,9 @@ class rdjki : public Fijk
 		assert(false);
 	    }
 	}
+
+	string mnemonic() const
+	{
+	    return "rdjki";
+	}
 };
