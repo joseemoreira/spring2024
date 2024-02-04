@@ -34,11 +34,11 @@
 
 #define jmpk(Xj,k)		if (process(new instructions::jmpk   (Xj, k)))  return;
 
-#define rdjki(Xi, Xj, Xk)	instructions::rdjki(Xi, Xj, Xk);
+#define rdjki(Xi, Xj, Xk)	process(new instructions::rdjki(Xi, Xj, Xk));
 
-#define sdjki(Xi, Xj, Xk)	instructions::sdjki(Xi, Xj, Xk);
+#define sdjki(Xi, Xj, Xk)	process(new instructions::sdjki(Xi, Xj, Xk));
 
-#define rdKj(Xj, K)		instructions::rdKj(Xj, K);
+#define rdKj(Xj, K)		process(new instructions::rdKj(Xj, K));
 
 #define xkj(Xj, k)		process(new instructions::xkj(Xj, k));
 

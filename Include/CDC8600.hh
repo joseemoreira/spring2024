@@ -150,13 +150,6 @@ namespace CDC8600
         return call5<T1, T2, T3, T4, T5>(f);
     }
 
-    namespace instructions
-    {
-	void rdjki(uint8_t, uint8_t, uint8_t);	// Read data at address (Xj) + (Xk) to (Xi)			(p133)
-	void rdKj(uint8_t, uint32_t);		// Read data at address K to Xj					(p74)
-	void sdjki(uint8_t, uint8_t, uint8_t);	// Store data at address (Xj) + (Xk) from Xi			(p135)
-    } // namespace instructions
-
     class instruction			// Generic instruction class
     {
 	public:
@@ -272,6 +265,9 @@ namespace CDC8600
 #include<idjkj.hh>				// Integer difference of (Xj) minus k to Xj 			(p58)
 #include<isjkj.hh>				// Integer sum of (Xj) plus k to Xj 				(p57)
 #include<idzkj.hh>				// Integer difference of zero minus (Xk) to Xj 			(p62)
+#include<rdKj.hh>				// Read data at address K to Xj					(p74)
+#include<rdjki.hh>				// Read data at address (Xj) + (Xk) to (Xi)			(p133)
+#include<sdjki.hh>				// Store data at address (Xj) + (Xk) from Xi			(p135)
     } // namespace instructions
 
     extern vector<instruction*>	trace;
