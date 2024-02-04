@@ -152,10 +152,7 @@ namespace CDC8600
 
     namespace instructions
     {
-	bool jmpz(uint8_t);			// Jump to P + K if (Xj) equal to 0 				(p94)
-	bool jmpp(uint8_t);			// Jump to P + K if (Xj) positive 				(p98)
 	void compkj(uint8_t, uint8_t);		// Copy complement of (Xk) to Xj 				(p41)
-	void xkj(uint8_t, uint8_t);		// Transmit k to Xj 						(p55)
 	void rdjki(uint8_t, uint8_t, uint8_t);	// Read data at address (Xj) + (Xk) to (Xi)			(p133)
 	void sdjki(uint8_t, uint8_t, uint8_t);	// Store data at address (Xj) + (Xk) from Xi			(p135)
 	void isjki(uint8_t, uint8_t, uint8_t);	// Integer sum of (Xj) plus (Xk) to Xi				(p122)
@@ -165,6 +162,70 @@ namespace CDC8600
 	void idzkj(uint8_t, uint8_t);		// Integer difference of zero minus (Xk) to Xj 			(p62)
 	void rdKj(uint8_t, uint32_t);		// Read data at address K to Xj					(p74)
     } // namespace instructions
+
+    class instruction
+    {
+	public:
+	    virtual bool execute() = 0;	// every instruction must have a method "execute" that implements its semantics and returns "true" if branch is taken
+    };
+
+    class Fijk : public instruction
+    {
+    };
+
+    class FijK : public instruction
+    {
+    };
+
+    class Fnjn : public instruction
+    {
+    };
+
+    class Fjk : public instruction
+    {
+	protected:
+	    u08	_F;
+	    u08	_j;
+	    u08 _k;
+	public:
+	    Fjk(u08 F, u08 j, u08 k)
+	    {
+		assert(j < 16);
+		assert(k < 16);
+		_F = F;
+		_j = j;
+		_k = k;
+	    }
+    };
+
+    class FjK : public instruction
+    {
+	protected:
+	    u08 _F;
+	    u08 _j;
+	    u32 _K;
+	public:
+	    FjK(u08 F, u08 j, u32 K)
+	    {
+		assert(j < 16);
+		assert(K < (1 << 20));
+		_F = F;
+		_j = j;
+		_K = K;
+	    }
+    };
+
+    namespace instructions
+    {
+#include<jmpz.hh>				// Jump to P + K if (Xj) equal to 0                             (p94)
+#include<jmpp.hh>				// Jump to P + K if (Xj) positive                               (p98)
+#include<xkj.hh>				// Transmit k to Xj                                             (p55)
+    } // namespace instructions
+
+    extern vector<instruction*>	trace;
+
+    extern bool process(instruction*);
+
 } // namespace CDC8600
 
 #endif // _CDC8600_HH_

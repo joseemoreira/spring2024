@@ -128,4 +128,12 @@ namespace CDC8600
     template class reg<4>;
     template class reg<1>;
     template class reg<20>;
+
+    bool process
+    (
+        instruction* instr
+    )
+    {
+	return(instr->execute());
+    }
 } // namespace 8600

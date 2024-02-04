@@ -16,11 +16,11 @@
 
 #define jmpnrng(Xj,L)		if (instructions::jmpnrng(Xj)) goto L;
 
-#define jmpz(Xj,L)		if (instructions::jmpz(Xj)) goto L;
+#define jmpz(Xj,L)		if (process(new instructions::jmpz(Xj,0))) goto L;
 
 #define jmpnz(Xj,L)		if (instructions::jmpnz(Xj)) goto L;
 
-#define jmpp(Xj,L)		if (instructions::jmpp(Xj)) goto L;
+#define jmpp(Xj,L)		if (process(new instructions::jmpp(Xj,0))) goto L;
 
 #define jmpn(Xj,L)		if (instructions::jmpn(Xj)) goto L;
 
@@ -34,7 +34,7 @@
 
 #define jmpk(Xj,k)		return;
 
-#define xkj(Xj, k)		instructions::xkj(Xj, k);
+#define xkj(Xj, k)		process(new instructions::xkj(Xj, k));
 
 #define rdjki(Xi, Xj, Xk)	instructions::rdjki(Xi, Xj, Xk);
 

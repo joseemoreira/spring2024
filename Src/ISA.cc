@@ -5,37 +5,6 @@ namespace CDC8600
 {
    namespace instructions
    {   
-        bool jmpz
-	(
-	    uint8_t Xj
-	)
-	{
-	    assert(Xj < 16);
-	    if (0 == PROC.X(Xj).u()) return true;
-	    else return false;
-	}
-
-	bool jmpp
-	(
-	    uint8_t Xj
-	)
-	{
-	    assert(Xj < 16);
-	    if (0 < PROC.X(Xj).i()) return true;
-	    else return false;
-	}
-
-        void xkj
-	(
-	    uint8_t Xj, 
-	    uint8_t k
-	)
-	{
-	    assert(Xj < 16);
-	    assert(k < 16);
-	    PROC.X(Xj).u() = k;
-	}
-
         void rdjki
 	(
 	    uint8_t Xi, 
