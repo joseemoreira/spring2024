@@ -97,6 +97,7 @@ namespace CDC8600
 	u64 left = v >> (_first + n);
 	u64 right = v & ((1UL << _first) - 1);
 	MEM[_loc].u() = (left << (_first + n)) + (u << _first) + right;
+	return *this;
     }
 
     void reset
