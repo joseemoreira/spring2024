@@ -115,6 +115,7 @@ namespace CDC8600
 	instructions::target = true;							// First instruction is target of a branch
 	operations::count = 0;								// Operation count starts at 0
 	operations::nextdispatch = 0;							// Start dispatching operations at cycle 0
+	operations::maxcycle = 0;							// Maximum completion time observed
 	for (u32 i=0; i<trace.size(); i++) delete trace[i];				// Delete all previous instructions
 	trace.clear();									// Clear the trace
 	line2addr.clear();								// Clear line -> address map
@@ -285,14 +286,16 @@ namespace CDC8600
 	vector<u64>		REGready(params::micro::nregs); // ready cycle for microarchitected registers
 	u64 			count;				// operation count
 	u64 			nextdispatch;			// next operation dispatch cycle
+	u64			maxcycle;			// maximum observed completion cycle
 
 	bool process
 	(
 	    operation* op
 	)
 	{
-	    op->process(nextdispatch);	// process this operation
-	    count++;			// update operation count
+	    op->process(nextdispatch);			// process this operation
+	    count++;					// update operation count
+	    maxcycle = max(maxcycle, op->complete());	// update maximum observed completion time
 	}
     } // namespace operations
 } // namespace 8600

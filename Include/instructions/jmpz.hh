@@ -13,4 +13,11 @@ class jmpz : public FjK
 	{
 	    return "jmpz";
 	}
+
+	bool ops()
+	{
+	    process(new operations::cmpz(_j));
+	    process(new operations::jmpz());
+	    return false;
+	}
 };

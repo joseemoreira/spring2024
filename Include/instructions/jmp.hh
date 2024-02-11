@@ -17,4 +17,10 @@ class jmp : public FjK
 	{
 	    return mnemonic() + "(" + to_string(_K) + ")";
 	}
+
+	bool ops()
+	{
+	    process(new operations::jmp());
+	    return false;
+	}
 };
