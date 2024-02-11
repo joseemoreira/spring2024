@@ -7,30 +7,16 @@
 #include<vector>
 #include<map>
 #include<iostream>
+#include<iomanip>
 #include<complex>
+#include<types.hh>
+#include<parameters.hh>
+#include<operations.hh>
 
 using namespace std;
 
 namespace CDC8600
 {
-    typedef uint64_t		u64;
-    typedef uint32_t		u32;
-    typedef uint8_t		u08;
-    typedef int64_t		i64;
-    typedef int32_t		i32;
-    typedef double		f64;
-    typedef complex<double>	c128;
-
-    namespace params
-    {
-
-	namespace MEM
-	{
-	    const uint32_t	N = 262144;	// Memory size = 256Ki words
-	} // namespace Memory
-
-    } // namespace params
-
     class word		// 64 bits, interpreted as signed, unsigned, or float
     {
 	private:
@@ -324,6 +310,7 @@ namespace CDC8600
 	    u32 _addr;					// byte (not word) address of instruction in memory
 	public:
 	    virtual bool execute() = 0;			// every instruction must have a method "execute" that implements its semantics and returns "true" if branch is taken
+	    virtual bool ops() { }			// the ops method processes the internal ops that implement the instrution
 	    virtual u08 len() const = 0;		// length of instruction in bytes (2 or 4)
 	    virtual string mnemonic() const = 0;	// mnemonic for the instruction
 	    virtual string dasm() const = 0;		// disassembly for the instruction
@@ -444,23 +431,23 @@ namespace CDC8600
 
     namespace instructions
     {
-#include<jmp.hh>				// Jump to P+K                                                  (p86)
-#include<jmpz.hh>				// Jump to P + K if (Xj) equal to 0                             (p94)
-#include<jmpp.hh>				// Jump to P + K if (Xj) positive                               (p98)
-#include<jmpk.hh>				// Subroutine exit, computed jump to (Xj) + k                   (p110)
-#include<xkj.hh>				// Transmit k to Xj                                             (p55)
-#include<compk.hh>				// Copy complement of (Xk) to Xj 				(p41)
-#include<isjki.hh>				// Integer sum of (Xj) plus (Xk) to Xi				(p122)
-#include<ipjkj.hh>				// Integer product of (Xj) times (Xk) to Xj 			(p52)
-#include<idjkj.hh>				// Integer difference of (Xj) minus k to Xj 			(p58)
-#include<isjkj.hh>				// Integer sum of (Xj) plus k to Xj 				(p57)
-#include<idzkj.hh>				// Integer difference of zero minus (Xk) to Xj 			(p62)
-#include<rdKj.hh>				// Read data at address K to Xj					(p74)
-#include<rdjki.hh>				// Read data at address (Xj) + (Xk) to (Xi)			(p133)
-#include<sdjki.hh>				// Store data at address (Xj) + (Xk) from Xi			(p135)
-#include<fmul.hh>				// floating point multiplication Xi = Xj * Xk
-#include<fadd.hh>				// floating point addition Xi = Xj + Xk
-#include<fsub.hh>				// floating point subtraction Xi = Xj - Xk
+#include<instructions/jmp.hh>				// Jump to P+K                                                  (p86)
+#include<instructions/jmpz.hh>				// Jump to P + K if (Xj) equal to 0                             (p94)
+#include<instructions/jmpp.hh>				// Jump to P + K if (Xj) positive                               (p98)
+#include<instructions/jmpk.hh>				// Subroutine exit, computed jump to (Xj) + k                   (p110)
+#include<instructions/xkj.hh>				// Transmit k to Xj                                             (p55)
+#include<instructions/compk.hh>				// Copy complement of (Xk) to Xj 				(p41)
+#include<instructions/isjki.hh>				// Integer sum of (Xj) plus (Xk) to Xi				(p122)
+#include<instructions/ipjkj.hh>				// Integer product of (Xj) times (Xk) to Xj 			(p52)
+#include<instructions/idjkj.hh>				// Integer difference of (Xj) minus k to Xj 			(p58)
+#include<instructions/isjkj.hh>				// Integer sum of (Xj) plus k to Xj 				(p57)
+#include<instructions/idzkj.hh>				// Integer difference of zero minus (Xk) to Xj 			(p62)
+#include<instructions/rdKj.hh>				// Read data at address K to Xj					(p74)
+#include<instructions/rdjki.hh>				// Read data at address (Xj) + (Xk) to (Xi)			(p133)
+#include<instructions/sdjki.hh>				// Store data at address (Xj) + (Xk) from Xi			(p135)
+#include<instructions/fmul.hh>				// floating point multiplication Xi = Xj * Xk
+#include<instructions/fadd.hh>				// floating point addition Xi = Xj + Xk
+#include<instructions/fsub.hh>				// floating point subtraction Xi = Xj - Xk
     } // namespace instructions
 
     namespace instructions
@@ -469,7 +456,6 @@ namespace CDC8600
 	extern bool target;	// Is the current instruction the target of a branch?
     };
 
-    extern bool 		tracing;
     extern vector<instruction*>	trace;
 
     extern map<u32, u32> line2addr;

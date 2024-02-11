@@ -13,4 +13,11 @@ class jmpp : public FjK
 	{
 	    return "jmpp";
 	}
+
+	bool ops()
+	{
+	    process(new operations::cmpz(_j));
+	    process(new operations::jmpp());
+	    return false;
+	}
 };

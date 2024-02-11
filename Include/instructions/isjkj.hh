@@ -12,4 +12,10 @@ class isjkj : public Fjk
 	{
 	    return "isjkj";
 	}
+
+	bool ops()
+	{
+	    process(new operations::isjkj(_j, _k));
+	    return false;
+	}
 };

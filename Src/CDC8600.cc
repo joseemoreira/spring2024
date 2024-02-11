@@ -104,18 +104,22 @@ namespace CDC8600
     (
     )
     {
-	for (uint32_t i = 0; i < params::MEM::N; i++) MEM[i].u() = 0;	// Zero the memory
-	FreeMEM = 4*8192;						// Heap starts in page 4
-	PROC._XA = 4;							// User context for PROC[0] is in frame 4
-	PROC.FL() = (u64)(29 * 8192 / 256);				// User data memory is 29 pages
-	PROC.RA() = (u64)( 3 * 8192 / 256);				// User data memory begins in page 3
-	instructions::count = 0;					// Instruction count starts at 0
-	instructions::target = true;					// First instruction is target of a branch
-	for (u32 i=0; i<trace.size(); i++) delete trace[i];		// Delete all previous instructions
-	trace.clear();							// Clear the trace
-	line2addr.clear();						// Clear line -> address map
-	line2encoding.clear();						// Clear line -> encoding map
-	line2len.clear();						// Clear line -> len map
+	for (u32 i = 0; i < params::MEM::N; i++) MEM[i].u() = 0;			// Zero the memory
+	for (u32 i = 0; i < params::MEM::N; i++) operations::MEMready[i] = 0;		// Zero the ready time for all`memory locations
+	for (u32 i = 0; i < params::micro::nregs; i++) operations::REGready[i] = 0;	// Zero the ready time for all microarchitected registers
+	FreeMEM = 4*8192;								// Heap starts in page 4
+	PROC._XA = 4;									// User context for PROC[0] is in frame 4
+	PROC.FL() = (u64)(29 * 8192 / 256);						// User data memory is 29 pages
+	PROC.RA() = (u64)( 3 * 8192 / 256);						// User data memory begins in page 3
+	instructions::count = 0;							// Instruction count starts at 0
+	instructions::target = true;							// First instruction is target of a branch
+	operations::count = 0;								// Operation count starts at 0
+	operations::nextdispatch = 0;							// Start dispatching operations at cycle 0
+	for (u32 i=0; i<trace.size(); i++) delete trace[i];				// Delete all previous instructions
+	trace.clear();									// Clear the trace
+	line2addr.clear();								// Clear line -> address map
+	line2encoding.clear();								// Clear line -> encoding map
+	line2len.clear();								// Clear line -> len map
     }
 
     void *memalloc
@@ -198,6 +202,35 @@ namespace CDC8600
 	cout << endl;
     }
 
+    void dumpheaderop
+    (
+    )
+    {
+	cout << "  instr #";
+	cout << " |    line #";
+	cout << " |                   instruction ";
+	cout << " |  address";
+	cout << " | encoding ";
+	cout << " |     op # ";
+	cout << " |               operation ";
+	cout << " |    ready ";
+	cout << " |    issue ";
+	cout << " | complete ";
+	cout << endl;
+
+	cout << "----------";
+	cout << "+-----------";
+	cout << "+--------------------------------";
+	cout << "+----------";
+	cout << "+-----------";
+	cout << "+-----------";
+	cout << "+--------------------------";
+	cout << "+-----------";
+	cout << "+-----------";
+	cout << "+----------";
+	cout << endl;
+    }
+
     void dump
     (
         u32		i,
@@ -238,10 +271,28 @@ namespace CDC8600
 	trace.push_back(instr);				// save instruction to trace
 	if (tracing)					// run-time tracing
 	{
-	    if (0 == instructions::count) dumpheader();
+	    if (0 == instructions::count) dumpheaderop();
 	    dump(instructions::count, instr);
 	}
+	instr->ops();					// process the internal operations of this instruction
 	instructions::count++;				// increment instruction counter
 	return instructions::target;			// return true if a branch is taken
     }
+
+    namespace operations
+    {
+	vector<u64>		MEMready(params::MEM::N);	// ready cycle for memory locations
+	vector<u64>		REGready(params::micro::nregs); // ready cycle for microarchitected registers
+	u64 			count;				// operation count
+	u64 			nextdispatch;			// next operation dispatch cycle
+
+	bool process
+	(
+	    operation* op
+	)
+	{
+	    op->process(nextdispatch);	// process this operation
+	    count++;			// update operation count
+	}
+    } // namespace operations
 } // namespace 8600
