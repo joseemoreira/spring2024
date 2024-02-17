@@ -24,6 +24,12 @@ namespace CDC8600
 		P	  = 23
 	    };
 
+	    const u32	nFPUs = 1;
+	    const u32	nFXUs = 1;
+	    const u32	nBRUs = 1;
+	    const u32   nLDUs = 1;
+	    const u32 	nSTUs = 1;
+
 	    const u32	nregs = 24;	// number of micro-architected registers
 	    				// 0-15 : X registers
 					// 16 : X scratch register

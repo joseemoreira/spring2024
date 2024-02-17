@@ -3,12 +3,15 @@
 
 #include <CDC8600.hh>
 
-// 1. Branch Facility
-#define LABEL(L)                                                                                                       \
-    L : {                                                                                                              \
-    }
+// 0. Noops
 
-#define jmp(L)			if (process(new  instructions::jmp   (0), __LINE__))      goto L;
+#define pass()			process(new instructions::pass(), __LINE__);
+
+// 1. Branch Facility
+
+#define LABEL(L) L : instructions::forcealign = __LINE__; addlabel(#L, __LINE__); 
+
+#define jmp(L)			if (process(new  instructions::jmp   (#L), __LINE__))      goto L;
 
 #define jmpa(L)			if (process(new  instructions::jmpa  (0), __LINE__))      goto L;
 
@@ -16,11 +19,11 @@
 
 #define jmpnrng(Xj,L)		if (process(new instructions::jmpnrng(Xj,  0), __LINE__)) goto L;
 
-#define jmpz(Xj,L)		if (process(new instructions::jmpz   (Xj,  0), __LINE__)) goto L;
+#define jmpz(Xj,L)		if (process(new instructions::jmpz   (Xj,  #L), __LINE__)) goto L;
 
 #define jmpnz(Xj,L)		if (process(new instructions::jmpnz  (Xj,  0), __LINE__)) goto L;
 
-#define jmpp(Xj,L)		if (process(new instructions::jmpp   (Xj,  0), __LINE__)) goto L;
+#define jmpp(Xj,L)		if (process(new instructions::jmpp   (Xj,  #L), __LINE__)) goto L;
 
 #define jmpn(Xj,L)		if (process(new instructions::jmpn   (Xj,  0), __LINE__)) goto L;
 
@@ -34,11 +37,15 @@
 
 #define jmpk(Xj,k)		if (process(new instructions::jmpk   (Xj, k), __LINE__))  return;
 
+// 2. Load/store facility
+
 #define rdjki(Xi, Xj, Xk)	process(new instructions::rdjki(Xi, Xj, Xk), __LINE__);
 
 #define sdjki(Xi, Xj, Xk)	process(new instructions::sdjki(Xi, Xj, Xk), __LINE__);
 
 #define rdKj(Xj, K)		process(new instructions::rdKj(Xj, K), __LINE__);
+
+// 3. Fixed-point facility
 
 #define xkj(Xj, k)		process(new instructions::xkj(Xj, k), __LINE__);
 
@@ -51,6 +58,8 @@
 #define isjkj(Xj, Xk)		process(new instructions::isjkj(Xj, Xk), __LINE__);
 
 #define ipjkj(Xj, Xk)		process(new instructions::ipjkj(Xj, Xk), __LINE__);
+
+// 4. Floating-point facility
 
 #define fmul(Xi, Xj, Xk)	process(new instructions::fmul(Xi, Xj, Xk), __LINE__);
 
