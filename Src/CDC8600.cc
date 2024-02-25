@@ -8,6 +8,7 @@ namespace CDC8600
     vector<word> 	MEM(params::MEM::N);
     uint32_t		FreeMEM;
     Processor		PROC;
+    L1::cache		L1D;
 
     word& Processor::X
     (
@@ -100,6 +101,85 @@ namespace CDC8600
 	return *this;
     }
 
+    namespace L1
+    {
+	cache::cache
+	(
+	) : _sets(params::L1::nsets)
+	{
+	}
+
+	void cache::reset()
+	{
+	    for (u32 i=0; i < params::L1::nsets; i++) _sets[i].reset();
+	}
+
+	cacheset::cacheset
+	(
+	) : _valid(params::L1::nways), _tag(params::L1::nways), _used(params::L1::nways)
+	{
+	}
+
+	void cacheset::reset()
+	{
+	    for (u32 i=0; i < params::L1::nways; i++) _valid[i] = false;
+	}
+
+	bool cache::loadhit
+	(
+	    u32 addr,
+	    u64 cycle
+	)
+	{
+	    u32 lineaddr = addr / params::L1::linesize;
+	    cacheset &candidate = _sets[lineaddr % params::L1::nsets];
+	    for (u32 i=0; i < params::L1::nways; i++)
+		if (candidate.valid(i) && (candidate.tag(i) == lineaddr)) { candidate.used(i) = cycle; return true; } // hit
+
+	    // must allocate on a load miss
+	    for (u32 i=0; i < params::L1::nways; i++)
+	    {
+		if (!candidate.valid(i))
+		{
+		    // invalid entry, can use this one
+		    candidate.validate(i);
+		    candidate.tag(i) = lineaddr;
+		    candidate.used(i) = cycle;
+		    return false;
+		}
+	    }
+
+	    // no invalid entry in this set, must find the LRU
+	    u32 lruentry = 0;
+	    u64 lrutime = UINT64_MAX;
+	    for (u32 i=0; i < params::L1::nways; i++)
+	    {
+		if (candidate.used(i) < lrutime)
+		{
+		    lrutime = candidate.used(i);
+		    lruentry = i;
+		}
+	    }
+	    candidate.tag(lruentry) = lineaddr;
+	    candidate.used(lruentry) = cycle;
+	    return false;
+	}
+	
+	bool cache::storehit
+	(
+	    u32 addr,
+	    u64 cycle
+	)
+	{
+	    u32 lineaddr = addr / params::L1::linesize;
+	    cacheset &candidate = _sets[lineaddr % params::L1::nsets];
+	    for (u32 i=0; i < params::L1::nways; i++)
+		if (candidate.valid(i) && (candidate.tag(i) == lineaddr)) { candidate.used(i) = cycle; return true; } // hit
+    	    // do not allocate on store miss
+	    return false;
+	}
+    }
+
     void reset
     (
     )
@@ -127,6 +207,7 @@ namespace CDC8600
 	for (u32 i=0; i < params::micro::nFPUs; i++) units::FPUs[i].clear();		// Cluear usage of FPUs
 	for (u32 i=0; i < params::micro::nLDUs; i++) units::LDUs[i].clear();		// Cluear usage of LDUs
 	for (u32 i=0; i < params::micro::nSTUs; i++) units::STUs[i].clear();		// Cluear usage of STUs
+	L1D.reset();									// Reset the L1 data cache (all entries invalid)
     }
 
     void *memalloc
