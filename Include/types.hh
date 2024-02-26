@@ -161,6 +161,8 @@ namespace CDC8600
             u32  			instr_forcealign;	// Align this instruction at a word boundary
 	    bool			labeling;		// In instruction address labeling mode
 	    u32				runningaddr;		// Running instruction address during labeling
+
+	    void			reset(u32);		// Reset a particular processor number
     };
 } // namespace CDC8600
 

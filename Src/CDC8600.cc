@@ -2,12 +2,33 @@
 #include<iomanip>
 #include<CDC8600.hh>
 #include<ISA.hh>
+#ifdef _OPENMP
+#include<omp.h>
+#endif
 
 namespace CDC8600
 {
     vector<word> 	MEM(params::MEM::N);
     uint32_t		FreeMEM;
-    Processor		PROC;
+    vector<Processor>	PROC(params::Proc::N);
+
+    u32	me()
+    {
+#ifdef _OPENMP
+	return omp_get_thread_num();
+#else
+	return 0;
+#endif
+    }
+
+    u32 nump()
+    {
+#ifdef _OPENMP
+	return omp_get_num_threads();
+#else
+	return 1;
+#endif
+    }
 
     word& Processor::X
     (
@@ -185,29 +206,37 @@ namespace CDC8600
     {
 	for (u32 i = 0; i < params::MEM::N; i++) MEM[i].u() = 0;			// Zero the memory
 	for (u32 i = 0; i < params::MEM::N; i++) operations::MEMready[i] = 0;		// Zero the ready time for all`memory locations
-	PROC.REGready.resize(params::micro::nregs); for (u32 i = 0; i < params::micro::nregs; i++) PROC.REGready[i] = 0;	// Zero the ready time for all microarchitected registers
 	FreeMEM = 4*8192;								// Heap starts in page 4
-	PROC._XA = 4;									// User context for PROC[0] is in frame 4
-	PROC.FL() = (u64)(29 * 8192 / 256);						// User data memory is 29 pages
-	PROC.RA() = (u64)( 3 * 8192 / 256);						// User data memory begins in page 3
-	PROC.instr_count = 0;								// Instruction count starts at 0
-	PROC.instr_target = true;							// First instruction is target of a branch
-	PROC.instr_forcealign = 0;							// Force instruction address to align to word boundary
-	PROC.op_count = 0;								// Operation count starts at 0
-	PROC.op_nextdispatch = 0;							// Start dispatching operations at cycle 0
-	PROC.op_maxcycle = 0;								// Maximum completion time observed
-	for (u32 i=0; i<PROC.trace.size(); i++) delete PROC.trace[i];			// Delete all previous instructions
-	PROC.trace.clear();								// Clear the trace
-	PROC.line2addr.clear();								// Clear line -> address map
-	PROC.line2encoding.clear();							// Clear line -> encoding map
-	PROC.line2len.clear();								// Clear line -> len map
-	PROC.BRUs.resize(params::micro::nBRUs); for (u32 i=0; i < params::micro::nBRUs; i++) PROC.BRUs[i].clear();		// Cluear usage of BRUs
-	PROC.FXUs.resize(params::micro::nFXUs); for (u32 i=0; i < params::micro::nFXUs; i++) PROC.FXUs[i].clear();		// Cluear usage of FXUs
-	PROC.FPUs.resize(params::micro::nFPUs); for (u32 i=0; i < params::micro::nFPUs; i++) PROC.FPUs[i].clear();		// Cluear usage of FPUs
-	PROC.LDUs.resize(params::micro::nLDUs); for (u32 i=0; i < params::micro::nLDUs; i++) PROC.LDUs[i].clear();		// Cluear usage of LDUs
-	PROC.STUs.resize(params::micro::nSTUs); for (u32 i=0; i < params::micro::nSTUs; i++) PROC.STUs[i].clear();		// Cluear usage of STUs
-	PROC.L1D.reset();								// Reset the L1 data cache (all entries invalid)
-	PROC.labeling = false;
+	for (u32 i = 0; i < params::Proc::N; i++) PROC[i].reset(i);			// Reset the processors
+    }
+
+    void Processor::reset
+    (
+     	u32 id
+    )
+    {
+	REGready.resize(params::micro::nregs); for (u32 i = 0; i < params::micro::nregs; i++) REGready[i] = 0;	// Zero the ready time for all microarchitected registers
+	_XA = 4 + id;									// User context for PROC[0] is in frame 4
+	FL() = (u64)(29 * 8192 / 256);						// User data memory is 29 pages
+	RA() = (u64)( 3 * 8192 / 256);						// User data memory begins in page 3
+	instr_count = 0;								// Instruction count starts at 0
+	instr_target = true;							// First instruction is target of a branch
+	instr_forcealign = 0;							// Force instruction address to align to word boundary
+	op_count = 0;								// Operation count starts at 0
+	op_nextdispatch = 0;							// Start dispatching operations at cycle 0
+	op_maxcycle = 0;								// Maximum completion time observed
+	for (u32 i=0; i<trace.size(); i++) delete trace[i];			// Delete all previous instructions
+	trace.clear();								// Clear the trace
+	line2addr.clear();								// Clear line -> address map
+	line2encoding.clear();							// Clear line -> encoding map
+	line2len.clear();								// Clear line -> len map
+	BRUs.resize(params::micro::nBRUs); for (u32 i=0; i < params::micro::nBRUs; i++) BRUs[i].clear();		// Cluear usage of BRUs
+	FXUs.resize(params::micro::nFXUs); for (u32 i=0; i < params::micro::nFXUs; i++) FXUs[i].clear();		// Cluear usage of FXUs
+	FPUs.resize(params::micro::nFPUs); for (u32 i=0; i < params::micro::nFPUs; i++) FPUs[i].clear();		// Cluear usage of FPUs
+	LDUs.resize(params::micro::nLDUs); for (u32 i=0; i < params::micro::nLDUs; i++) LDUs[i].clear();		// Cluear usage of LDUs
+	STUs.resize(params::micro::nSTUs); for (u32 i=0; i < params::micro::nSTUs; i++) STUs[i].clear();		// Cluear usage of STUs
+	L1D.reset();								// Reset the L1 data cache (all entries invalid)
+	labeling = false;
     }
 
     void *memalloc
@@ -239,8 +268,8 @@ namespace CDC8600
 	u32    line
     )
     {
-	if (PROC.label2line.count(label)) return;
-	PROC.label2line[label] = line;
+	if (PROC[me()].label2line.count(label)) return;
+	PROC[me()].label2line[label] = line;
     }
 
     template<typename T> void label
@@ -248,14 +277,14 @@ namespace CDC8600
         T (*f)()
     )
     {
-	PROC.line2addr.clear();
-	PROC.line2encoding.clear();
-	PROC.line2len.clear();
-	PROC.label2line.clear();
-	PROC.labeling = true;
-	PROC.runningaddr = 0;
+	PROC[me()].line2addr.clear();
+	PROC[me()].line2encoding.clear();
+	PROC[me()].line2len.clear();
+	PROC[me()].label2line.clear();
+	PROC[me()].labeling = true;
+	PROC[me()].runningaddr = 0;
 	f();
-	PROC.labeling = false;
+	PROC[me()].labeling = false;
     }
     
     template void label(void (*f)());
@@ -268,20 +297,20 @@ namespace CDC8600
         instruction*	instr
     )
     {
-	if (0 == PROC.runningaddr) PROC.runningaddr = instr->line() * 8;
-	if (PROC.line2addr.count(instr->line())) return;
+	if (0 == PROC[me()].runningaddr) PROC[me()].runningaddr = instr->line() * 8;
+	if (PROC[me()].line2addr.count(instr->line())) return;
 
-	if (PROC.runningaddr % instr->len())
+	if (PROC[me()].runningaddr % instr->len())
 	{
 		cout << "Instruction at line # " << instr->line() 
 		     << " has length " << instr->len() << " bytes, but has a byte offset of "
-		     << (PROC.runningaddr % 8) << endl;
+		     << (PROC[me()].runningaddr % 8) << endl;
 		assert(false);
 	}
-	PROC.line2addr[instr->line()] = PROC.runningaddr;
-	PROC.line2encoding[instr->line()] = instr->encoding();
-	PROC.line2len[instr->line()] = instr->len();
-	PROC.runningaddr += instr->len();
+	PROC[me()].line2addr[instr->line()] = PROC[me()].runningaddr;
+	PROC[me()].line2encoding[instr->line()] = instr->encoding();
+	PROC[me()].line2len[instr->line()] = instr->len();
+	PROC[me()].runningaddr += instr->len();
     }
 
     void assignaddr
@@ -293,36 +322,36 @@ namespace CDC8600
 	bool		target		// is this a target of a branch?
     )
     {
-	if (PROC.line2addr.count(instr->line()))				// line already in map?
+	if (PROC[me()].line2addr.count(instr->line()))				// line already in map?
 	{
-	    assert(instr->encoding() == PROC.line2encoding[instr->line()]);	// encoding match?
-	    assert(instr->len()      == PROC.line2len[instr->line()]);		// instruction length match?
+	    assert(instr->encoding() == PROC[me()].line2encoding[instr->line()]);	// encoding match?
+	    assert(instr->len()      == PROC[me()].line2len[instr->line()]);		// instruction length match?
 	}
-	else if (PROC.instr_forcealign)						// this line has a label, so we must force a word alignment
+	else if (PROC[me()].instr_forcealign)						// this line has a label, so we must force a word alignment
 	{
-	    PROC.line2addr[instr->line()] = instr->line() * 8;			// this is a byte address
-	    PROC.line2encoding[instr->line()] = instr->encoding();
-	    PROC.line2len[instr->line()]      = instr->len();
-	    PROC.instr_forcealign = 0;
+	    PROC[me()].line2addr[instr->line()] = instr->line() * 8;			// this is a byte address
+	    PROC[me()].line2encoding[instr->line()] = instr->encoding();
+	    PROC[me()].line2len[instr->line()]      = instr->len();
+	    PROC[me()].instr_forcealign = 0;
 	}
-	else if (PROC.line2addr.count(instr->line() - 1)) 			// is the previous line in the map?
+	else if (PROC[me()].line2addr.count(instr->line() - 1)) 			// is the previous line in the map?
 	{
-	    PROC.line2addr[instr->line()]     = PROC.line2addr[instr->line() - 1] + PROC.line2len[instr->line() - 1];
-	    PROC.line2encoding[instr->line()] = instr->encoding();
-	    PROC.line2len[instr->line()]      = instr->len();
+	    PROC[me()].line2addr[instr->line()]     = PROC[me()].line2addr[instr->line() - 1] + PROC[me()].line2len[instr->line() - 1];
+	    PROC[me()].line2encoding[instr->line()] = instr->encoding();
+	    PROC[me()].line2len[instr->line()]      = instr->len();
 	}
 	else									// new line
 	{
-	    PROC.line2addr[instr->line()] = instr->line() * 8;			// this is a byte address
-	    PROC.line2encoding[instr->line()] = instr->encoding();
-	    PROC.line2len[instr->line()]      = instr->len();
+	    PROC[me()].line2addr[instr->line()] = instr->line() * 8;			// this is a byte address
+	    PROC[me()].line2encoding[instr->line()] = instr->encoding();
+	    PROC[me()].line2len[instr->line()]      = instr->len();
 	}
 
 	if (target)								// is this the target of a branch
 	{
-	    if (PROC.line2addr[instr->line()] % 8)				// is the target address word aligned?
+	    if (PROC[me()].line2addr[instr->line()] % 8)				// is the target address word aligned?
 	    {
-		cout << "Instruction at line # " << instr->line() << " is the target of a branch but has a byte offset of " << (PROC.line2addr[instr->line()] % 8) << endl;
+		cout << "Instruction at line # " << instr->line() << " is the target of a branch but has a byte offset of " << (PROC[me()].line2addr[instr->line()] % 8) << endl;
 		assert(false);
 	    }
 	}
@@ -387,7 +416,7 @@ namespace CDC8600
 	cout << setw( 9) << i;
 	cout << " | " << setw( 9) << instr->line();
 	cout << " | " << setw(24) << instr->dasm();
-	cout << " | " << setfill('0') << setw( 8) << hex << PROC.line2addr[instr->line()] << dec << setfill(' ');
+	cout << " | " << setfill('0') << setw( 8) << hex << PROC[me()].line2addr[instr->line()] << dec << setfill(' ');
 	if (instr->len() == 4) cout << " | "     << setfill('0') << setw(8) << hex << instr->encoding() << dec << setfill(' ');
 	if (instr->len() == 2) cout << " |     " << setfill('0') << setw(4) << hex << instr->encoding() << dec << setfill(' '); 
 	cout << endl;
@@ -412,40 +441,40 @@ namespace CDC8600
 	u32 		line
     )
     {
-	if (PROC.labeling)
+	if (PROC[me()].labeling)
 	{
 	    instr->line() = line;
 	    labeladdr(instr);
 	    delete instr;
 	    return false;
 	}
-	instr->line() = line;				// save instruction line number in source file
-	assignaddr(instr, PROC.instr_target);		// assign an address to this instruction
-	instr->fixit();					// fix displacement in branches
-	PROC.instr_target = instr->execute();		// execute the instructions, remember if a branch is being taken
-	PROC.trace.push_back(instr);			// save instruction to trace
-	if (tracing)					// run-time tracing
+	instr->line() = line;								// save instruction line number in source file
+	assignaddr(instr, PROC[me()].instr_target);					// assign an address to this instruction
+	instr->fixit();									// fix displacement in branches
+	PROC[me()].instr_target = instr->execute();					// execute the instructions, remember if a branch is being taken
+	PROC[me()].trace.push_back(instr);						// save instruction to trace
+	if (tracing)									// run-time tracing
 	{
-	    if (0 == PROC.instr_count) dumpheaderop();
-	    dump(PROC.instr_count, instr);
+	    if (0 == PROC[me()].instr_count) dumpheaderop();
+	    dump(PROC[me()].instr_count, instr);
 	}
-	instr->ops();					// process the internal operations of this instruction
-	PROC.instr_count++;				// increment instruction counter
-	return PROC.instr_target;			// return true if a branch is taken
+	instr->ops();									// process the internal operations of this instruction
+	PROC[me()].instr_count++;							// increment instruction counter
+	return PROC[me()].instr_target;							// return true if a branch is taken
     }
 
     namespace operations
     {
-	vector<u64>		MEMready(params::MEM::N);	// ready cycle for memory locations
+	vector<u64>		MEMready(params::MEM::N);				// ready cycle for memory locations
 
 	bool process
 	(
 	    operation* op
 	)
 	{
-	    op->process(PROC.op_nextdispatch);					// process this operation
-	    PROC.op_count++;						// update operation count
-	    PROC.op_maxcycle = max(PROC.op_maxcycle, op->complete());	// update maximum observed completion time
+	    op->process(PROC[me()].op_nextdispatch);					// process this operation
+	    PROC[me()].op_count++;							// update operation count
+	    PROC[me()].op_maxcycle = max(PROC[me()].op_maxcycle, op->complete());	// update maximum observed completion time
 	}
     } // namespace operations
 } // namespace 8600
