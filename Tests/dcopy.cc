@@ -9,33 +9,30 @@ using namespace CDC8600;
 
 extern "C" int32_t dcopy_(int32_t *, double *, int32_t *, double *, int32_t *);
 
-const int N = 20;
+const u32 N = 20;
 
-void test_dcopy(int count)
+void test_dcopy(int count, bool traceon, i32 n, i32 incx, i32 incy)
 {
     reset();
 
-    int32_t n = rand() % 256;
-    int32_t incx = (rand() % 16) - 8;
-    int32_t incy = (rand() % 16) - 8;
     uint32_t nx = n*abs(incx); if (0 == nx) nx = 1;
     uint32_t ny = n*abs(incy); if (0 == ny) ny = 1;
     
-    tracing = false; if (n < 10) tracing = true;
+    tracing = traceon;
 
     f64 *x = (f64*)CDC8600::memalloc(nx);
     f64 *y = (f64*)CDC8600::memalloc(ny);
     f64 *Y = new f64[ny];
 
-    for (int i = 0; i < nx; i++) { x[i] = drand48(); }
-    for (int i = 0; i < ny; i++) { y[i] = 0.0;	 }
-    for (int i = 0; i < ny; i++) { Y[i] = 0.0;	 }
+    for (u32 i = 0; i < nx; i++) { x[i] = drand48(); }
+    for (u32 i = 0; i < ny; i++) { y[i] = 0.0;	 }
+    for (u32 i = 0; i < ny; i++) { Y[i] = 0.0;	 }
 
     dcopy_(&n, x, &incx, Y, &incy);		// Reference implementation of DCOPY
     CDC8600::BLAS::dcopy(n, x, incx, y, incy);	// Implementation of DCOPY for the CDC8600
 
     bool pass = true;
-    for (int i = 0; i < ny; i++)
+    for (u32 i = 0; i < ny; i++)
     {
         if (Y[i] != y[i])
         {
@@ -44,6 +41,8 @@ void test_dcopy(int count)
     }
 
     delete [] Y;
+    CDC8600::memfree(y, ny);
+    CDC8600::memfree(x, nx);
 
     cout << "dcopy [" << setw(2) << count << "] ";
     cout << "(n = " << setw(3) << n;
@@ -57,14 +56,37 @@ void test_dcopy(int count)
     else
         cout << "FAIL" << std::endl;
 
-    if (n < 10) dump(PROC[0].trace);
+    if (traceon) dump(PROC[0].trace);
+    if (traceon) dump(PROC[0].trace, "dcopy.tr");
 }
 
-int main()
+int main
+(
+    int		argc,
+    char	**argv
+)
 {
-    for (int i = 0; i < N; i++)
+    if (1 == argc)
     {
-        test_dcopy(i);
+	for (u32 i = 0; i < N; i++)
+	{
+	    i32 n = rand() % 256;
+	    i32 incx = (rand() % 16) - 8;
+	    i32 incy = (rand() % 16) - 8;
+	    test_dcopy(i, false, n, incx, incy);
+	}
+    }
+    else if (4 == argc)
+    {
+	i32 n = atoi(argv[1]);
+	i32 incx = atoi(argv[2]);
+	i32 incy = atoi(argv[3]);
+	test_dcopy(0, true, n, incx, incy);
+    }
+    else
+    {
+	cerr << "Usage : " << argv[0] << " [n incx incy]" << endl;
+	return -1;
     }
     return 0;
 }

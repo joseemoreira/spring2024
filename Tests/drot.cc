@@ -62,21 +62,26 @@ void test_drot(int count)
 
     delete [] X;
     delete [] Y;
+    CDC8600::memfree(y, ny);
+    CDC8600::memfree(x, nx);
 
     cout << "drot [" << setw(2)<< count << "] ";
     cout << "(n = " << setw(3) << n;
     cout << ", incx = " << setw(2) << incx;
     cout << ", incy = " << setw(2) << incy;
     cout << ", c = " << setw(2) << c << ", s = " << setw(2) << s;
-    cout << ", # of instr = " << setw(9) << instructions::count;
-    cout << ", # of cycles = " << setw(9) << operations::maxcycle;
+    cout << ", # of instr = " << setw(9) << PROC[0].instr_count;
+    cout << ", # of cycles = " << setw(9) << PROC[0].op_maxcycle;
     cout <<  ") : ";
     if (pass)
         cout << "PASS" << std::endl;
     else
         cout << "FAIL" << std::endl;
     
-    if (n < 10) dump(trace);
+    if (n < 10) {
+        dump(PROC[0].trace);
+        dump(PROC[0].trace, "drot.tr");
+    }
 }
 
 int main()
